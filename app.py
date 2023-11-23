@@ -36,23 +36,19 @@ model = YOLOseg(model_path, conf_thres=conf_thres, iou_thres=iou_thres)
 
 def main(input_file, procedure, image_size=640):
     file_bytes = np.asarray(bytearray(input_file.read()), dtype=np.uint8)  # Read bytes
-
-
     col1, col2 = st.columns((1, 1))
     with col1:
         st.title("Input")
         st.image(image, channels="RGB", use_column_width=True)
-
     with col2:
         st.title("Scanned")
         if procedure == "Traditional":
             pass
         else:
-          pass
-            # model = model_mbv3 if model_selected == "MobilenetV3-Large" else model_r50
-            # output = deep_learning_scan(og_image=image, trained_model=model, image_size=image_size)
-
-            # st.image(output, channels="RGB", use_column_width=True)
+            boxes, scores, class_ids, masks = model(file_bytes)
+            # Draw detections
+            combined_img = model.draw_masks(file_bytes)
+            st.image(combined_img, channels="RGB", use_column_width=True)
 
     # if output is not None:
         # st.markdown(get_image_download_link(output, f"scanned_{input_file.name}", "Download scanned File"), unsafe_allow_html=Tr

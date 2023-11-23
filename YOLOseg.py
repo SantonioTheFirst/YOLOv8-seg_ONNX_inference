@@ -1,6 +1,7 @@
 import numpy as np
 import cv2
 import onnxruntime
+from utils import nms, sigmoid, xywh2xyxy, draw_detections
 
 
 class YOLOseg:
@@ -66,15 +67,15 @@ class YOLOseg:
         num_classes = box_output.shape[1] - self.num_masks - 4
 
         # Filter out object confidence scores below threshold
-        scores = np.max(predictions[:, 4:4+num_classes], axis=1)
+        scores = np.max(predictions[:, 4: 4 + num_classes], axis=1)
         predictions = predictions[scores > self.conf_threshold, :]
         scores = scores[scores > self.conf_threshold]
 
         if len(scores) == 0:
             return [], [], [], np.array([])
 
-        box_predictions = predictions[..., :num_classes+4]
-        mask_predictions = predictions[..., num_classes+4:]
+        box_predictions = predictions[..., : num_classes + 4]
+        mask_predictions = predictions[..., num_classes + 4:]
 
         # Get the class with the highest confidence
         class_ids = np.argmax(box_predictions[:, 4:], axis=1)

@@ -1,3 +1,8 @@
+import numpy as np
+import cv2
+import onnxruntime
+
+
 class YOLOseg:
 
     def __init__(self, path, conf_thres=0.7, iou_thres=0.5, num_masks=32):

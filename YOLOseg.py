@@ -1,4 +1,4 @@
-class YOLOSeg:
+class YOLOseg:
 
     def __init__(self, path, conf_thres=0.7, iou_thres=0.5, num_masks=32):
         self.conf_threshold = conf_thres

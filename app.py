@@ -23,7 +23,7 @@ st.set_page_config(
     page_icon=':smile:', 
     layout="centered",  # centered, wide
     # initial_sidebar_state="expanded",
-    menu_items={'Author': '### SantonioTheFirst',},
+    menu_items={'About': '### SantonioTheFirst',},
 )
 
 

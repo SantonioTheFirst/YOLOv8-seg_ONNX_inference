@@ -20,7 +20,7 @@ class YOLOseg:
         self.options = onnxruntime.SessionOptions()
         self.options.graph_optimization_level = onnxruntime.GraphOptimizationLevel.ORT_ENABLE_ALL
         self.providers = onnxruntime.get_available_providers()
-        self.session = onnxruntime.InferenceSession(model_path, self.options, providers=self.providers)
+        self.session = onnxruntime.InferenceSession(path, self.options, providers=self.providers)
         self.session.disable_fallback()
 
         # Get model info

@@ -12,7 +12,6 @@ import streamlit as st
 model_path = 'best_q.onnx'
 conf_thres=0.7
 iou_thres=0.3
-model = YOLOseg(model_path, conf_thres=conf_thres, iou_thres=iou_thres)
 
 # ------------------------------------------------------------
 
@@ -25,6 +24,14 @@ st.set_page_config(
     # initial_sidebar_state="expanded",
     menu_items={'About': '### SantonioTheFirst',},
 )
+
+
+@st.cache
+def load_model(model_path, conf_thres=0.7, iou_thres=0.3):
+    return YOLOseg(model_path, conf_thres, iou_thres)
+
+
+model = YOLOseg(model_path, conf_thres=conf_thres, iou_thres=iou_thres)
 
 
 def main(input_file, procedure, image_size=640):

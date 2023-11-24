@@ -36,19 +36,20 @@ model = YOLOseg(model_path, conf_thres=conf_thres, iou_thres=iou_thres)
 
 def main(input_file, procedure):
     file_bytes = np.asarray(bytearray(input_file.read()), dtype=np.uint8)  # Read bytes
+    image = cv2.imdecode(file_bytes, 1)
     col1, col2 = st.columns((1, 1))
     with col1:
         st.title('Input')
-        st.write(file_bytes.shape)
-        st.image(file_bytes, channels='RGB', use_column_width=True)
+        st.write(image.shape)
+        st.image(image, channels='RGB', use_column_width=True)
     with col2:
         st.title('Scanned')
         if procedure == 'Traditional':
             pass
         else:
-            boxes, scores, class_ids, masks = model(file_bytes)
+            boxes, scores, class_ids, masks = model(image)
             # Draw detections
-            combined_img = model.draw_masks(file_bytes)
+            combined_img = model.draw_masks(image)
             st.image(combined_img, channels='RGB', use_column_width=True)
 
     # if output is not None:

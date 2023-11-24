@@ -7,7 +7,6 @@ from YOLOseg import YOLOseg
 import streamlit as st
 
 
-
 # ------------------------------------------------------------
 
 model_path = 'best_q.onnx'
@@ -21,7 +20,7 @@ iou_thres=0.3
 st.set_page_config(
     page_title='Document Scanner',
     page_icon=':smile:', 
-    layout='centered',  # centered, wide
+    layout='wide',  # centered, wide
     # initial_sidebar_state="expanded",
     menu_items={'About': '### SantonioTheFirst',},
 )
@@ -55,8 +54,12 @@ def main(input_file, procedure):
             st.info(f'Prediction time: {time() - start}s')
             st.image(combined_img, channels='RGB', use_column_width=True)
 
-    # if output is not None:
-        # st.markdown(get_image_download_link(output, f"scanned_{input_file.name}", "Download scanned File"), unsafe_allow_html=Tr
+        if combined_img is not None:
+            st.download_button(
+                label='Download image',
+                data=combined_img.to_bytes()
+                mime='image/png'
+            )
 
 '''
 # Document scanner

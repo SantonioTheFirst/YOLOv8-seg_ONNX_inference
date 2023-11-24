@@ -57,7 +57,7 @@ def main(input_file, procedure):
         if combined_img is not None:
             st.download_button(
                 label='Download image',
-                data=combined_img.to_bytes(),
+                data=combined_img.tobytes(),
                 mime='image/png'
             )
 

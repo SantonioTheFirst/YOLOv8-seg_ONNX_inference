@@ -42,7 +42,7 @@ def main(input_file, procedure):
     with col1:
         st.title('Input')
         st.write(image.shape)
-        st.image(bytesdata, channels='RGB', use_column_width=True)
+        st.image(image, channels='RGB', use_column_width=True)
     with col2:
         st.title('Scanned')
         if procedure == 'Traditional':

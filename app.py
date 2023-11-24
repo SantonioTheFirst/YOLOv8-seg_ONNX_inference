@@ -2,7 +2,7 @@ import os
 import cv2
 import numpy as np
 import onnxruntime
-import time
+from time import time
 from YOLOseg import YOLOseg
 import streamlit as st
 

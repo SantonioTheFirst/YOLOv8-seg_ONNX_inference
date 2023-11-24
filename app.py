@@ -58,9 +58,9 @@ def main(input_file, procedure):
 
         if combined_img is not None:
             result = Image.fromarray(combined_img.astype('uint8'), 'RGB')
-            img = Image.open(result)
+            #img = Image.open(result)
             buf = BytesIO()
-            img.save(buf, format='PNG')
+            result.save(buf, format='PNG')
             byte_img = buf.getvalue() 
             st.download_button(
                 label='Download image',

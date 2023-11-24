@@ -2,6 +2,7 @@ import os
 import cv2
 import numpy as np
 import onnxruntime
+import time
 from YOLOseg import YOLOseg
 import streamlit as st
 
@@ -35,7 +36,6 @@ model = YOLOseg(model_path, conf_thres=conf_thres, iou_thres=iou_thres)
 
 
 def main(input_file, procedure):
-    bytesdata = input_file.getvalue()
     file_bytes = np.asarray(bytearray(input_file.read()), dtype=np.uint8)  # Read bytes
     image = cv2.imdecode(file_bytes, 1)
     col1, col2 = st.columns((1, 1))
@@ -48,9 +48,11 @@ def main(input_file, procedure):
         if procedure == 'Traditional':
             pass
         else:
+            start = time.now()
             boxes, scores, class_ids, masks = model(image)
             # Draw detections
             combined_img = model.draw_masks(image)
+            st.info(f'Prediction time: {time.now() - start}s')
             st.image(combined_img, channels='RGB', use_column_width=True)
 
     # if output is not None:

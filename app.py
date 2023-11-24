@@ -70,7 +70,6 @@ with tab1:
     file_upload = st.file_uploader('Upload Document Image:', type=['jpg', 'jpeg', 'png'])
 
     if file_upload is not None:
-        st.write('Uploaded')
         _ = main(input_file=file_upload, procedure=procedure_selected)
 with tab2:
     run = st.checkbox('Start Camera')

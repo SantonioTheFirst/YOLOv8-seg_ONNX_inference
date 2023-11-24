@@ -37,7 +37,7 @@ model = YOLOseg(model_path, conf_thres=conf_thres, iou_thres=iou_thres)
 
 def main(input_file, procedure):
     file_bytes = np.asarray(bytearray(input_file.read()), dtype=np.uint8)  # Read bytes
-    image = cv2.imdecode(file_bytes, 1)
+    image = cv2.cvtColor(cv2.imdecode(file_bytes, 1), CV2.COLOR_BGR2RGB)
     col1, col2 = st.columns((1, 1))
     with col1:
         st.title('Input')

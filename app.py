@@ -34,7 +34,7 @@ def load_model(model_path, conf_thres=0.7, iou_thres=0.3):
 model = YOLOseg(model_path, conf_thres=conf_thres, iou_thres=iou_thres)
 
 
-def main(input_file, procedure, image_size=640):
+def main(input_file, procedure):
     file_bytes = np.asarray(bytearray(input_file.read()), dtype=np.uint8)  # Read bytes
     col1, col2 = st.columns((1, 1))
     with col1:
@@ -66,7 +66,7 @@ with tab1:
 
     if file_upload is not None:
         st.write('Uploaded')
-        #_ = main(input_file=file_upload, procedure=procedure_selected, image_size=IMAGE_SIZE)
+        _ = main(input_file=file_upload, procedure=procedure_selected)
 with tab2:
     run = st.checkbox("Start Camera")
 

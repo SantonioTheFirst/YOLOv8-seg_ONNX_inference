@@ -4,6 +4,8 @@ import numpy as np
 import onnxruntime
 from time import time
 from YOLOseg import YOLOseg
+from io import BytesIO
+from PIL import Image
 import streamlit as st
 
 
@@ -55,9 +57,14 @@ def main(input_file, procedure):
             st.image(combined_img, channels='RGB', use_column_width=True)
 
         if combined_img is not None:
+            result = Image.fromarray(combined_img.astype('uint8'), 'RGB')
+            img = Image.open(result)
+            buf = BytesIO()
+            img.save(buf, format='PNG')
+            byte_img = buf.getvalue() 
             st.download_button(
                 label='Download image',
-                data=combined_img.tobytes(),
+                data=byte_img,
                 mime='image/png'
             )
 

@@ -48,11 +48,11 @@ def main(input_file, procedure):
         if procedure == 'Traditional':
             pass
         else:
-            start = time.now()
+            start = time()
             boxes, scores, class_ids, masks = model(image)
             # Draw detections
             combined_img = model.draw_masks(image)
-            st.info(f'Prediction time: {time.now() - start}s')
+            st.info(f'Prediction time: {time() - start}s')
             st.image(combined_img, channels='RGB', use_column_width=True)
 
     # if output is not None:

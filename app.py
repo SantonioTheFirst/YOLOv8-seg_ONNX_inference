@@ -20,7 +20,7 @@ iou_thres=0.3
 st.set_page_config(
     page_title='Document Scanner',
     page_icon=':smile:', 
-    layout="centered",  # centered, wide
+    layout='centered',  # centered, wide
     # initial_sidebar_state="expanded",
     menu_items={'About': '### SantonioTheFirst',},
 )
@@ -38,17 +38,18 @@ def main(input_file, procedure):
     file_bytes = np.asarray(bytearray(input_file.read()), dtype=np.uint8)  # Read bytes
     col1, col2 = st.columns((1, 1))
     with col1:
-        st.title("Input")
-        st.image(file_bytes, channels="RGB", use_column_width=True)
+        st.title('Input')
+        st.write(file_bytes.shape)
+        st.image(file_bytes, channels='RGB', use_column_width=True)
     with col2:
-        st.title("Scanned")
-        if procedure == "Traditional":
+        st.title('Scanned')
+        if procedure == 'Traditional':
             pass
         else:
             boxes, scores, class_ids, masks = model(file_bytes)
             # Draw detections
             combined_img = model.draw_masks(file_bytes)
-            st.image(combined_img, channels="RGB", use_column_width=True)
+            st.image(combined_img, channels='RGB', use_column_width=True)
 
     # if output is not None:
         # st.markdown(get_image_download_link(output, f"scanned_{input_file.name}", "Download scanned File"), unsafe_allow_html=Tr
@@ -57,7 +58,7 @@ def main(input_file, procedure):
 # Document scanner
 '''
 
-procedure_selected = st.radio("Select Scanning Procedure:", ('Traditional', 'Deep Learning'), index=1, horizontal=True)
+procedure_selected = st.radio('Select Scanning Procedure:', ('Traditional', 'Deep Learning'), index=1, horizontal=True)
 
 tab1, tab2 = st.tabs(['Upload a Document', 'Capture Document'])
 
@@ -68,10 +69,10 @@ with tab1:
         st.write('Uploaded')
         _ = main(input_file=file_upload, procedure=procedure_selected)
 with tab2:
-    run = st.checkbox("Start Camera")
+    run = st.checkbox('Start Camera')
 
     if run:
-        file_upload = st.camera_input("Capture Document", disabled=not run)
+        file_upload = st.camera_input('Capture Document', disabled=not run)
         if file_upload is not None:
             pass
           #_ = main(input_file=file_upload, procedure=procedure_selected, image_size=IMAGE_SIZE)

@@ -35,7 +35,8 @@ def load_model(model_path, conf_thres=0.7, iou_thres=0.3):
 
 def process_output_masks(image, masks):
     result = []
-    for mask in masks:
+    for i, mask in enumerate(masks):
+        st.write(i)
         cropped = (np.stack((mask, ) * 3, axis=-1) * image)
         mask = (mask * 255.0).astype(np.uint8)
         contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
@@ -74,6 +75,7 @@ def main(input_file, procedure):
         else:
             start = time()
             boxes, scores, class_ids, masks = model(image)
+            st.write(len(masks))
             # Draw detections
             combined_img = model.draw_masks(image)
             st.info(f'Prediction time: {time() - start}s')

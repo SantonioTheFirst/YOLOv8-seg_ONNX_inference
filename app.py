@@ -4,7 +4,7 @@ import numpy as np
 import onnxruntime
 from time import time
 from YOLOseg import YOLOseg
-from io import BytesIO
+#from io import BytesIO
 from PIL import Image
 import streamlit as st
 
@@ -65,7 +65,7 @@ def main(input_file):
     col1, col2 = st.columns((1, 1))
     with col1:
         st.title('Input')
-        st.write(image.shape)
+        #st.write(image.shape)
         st.image(image, channels='RGB', use_column_width=True)
     with col2:
         st.title('Scanned')
@@ -78,6 +78,7 @@ def main(input_file):
         cropped_images = process_output_masks(image, masks)
         for im in cropped_images:
             st.image(im, channels='RGB', use_column_width=True)
+        st.info(f'Total time: {time() - start}s')
 
         #if combined_img is not None:
         #    result = Image.fromarray(combined_img.astype('uint8'), 'RGB')

@@ -36,7 +36,6 @@ def load_model(model_path, conf_thres=0.7, iou_thres=0.3):
 def process_output_masks(image, masks):
     result = []
     for i, mask in enumerate(masks):
-        st.write(i)
         cropped = (np.stack((mask, ) * 3, axis=-1) * image)
         mask = (mask * 255.0).astype(np.uint8)
         contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
@@ -60,7 +59,7 @@ def process_output_masks(image, masks):
 model = YOLOseg(model_path, conf_thres=conf_thres, iou_thres=iou_thres)
 
 
-def main(input_file, procedure):
+def main(input_file):
     file_bytes = np.asarray(bytearray(input_file.read()), dtype=np.uint8)  # Read bytes
     image = cv2.cvtColor(cv2.imdecode(file_bytes, 1), cv2.COLOR_BGR2RGB)
     col1, col2 = st.columns((1, 1))
@@ -70,19 +69,15 @@ def main(input_file, procedure):
         st.image(image, channels='RGB', use_column_width=True)
     with col2:
         st.title('Scanned')
-        if procedure == 'Traditional':
-            pass
-        else:
-            start = time()
-            boxes, scores, class_ids, masks = model(image)
-            st.write(len(masks))
-            # Draw detections
-            combined_img = model.draw_masks(image)
-            st.info(f'Prediction time: {time() - start}s')
-            st.image(combined_img, channels='RGB', use_column_width=True)
-            cropped_images = process_output_masks(image, masks)
-            for im in cropped_images:
-                st.image(im, channels='RGB', use_column_width=True)
+        start = time()
+        boxes, scores, class_ids, masks = model(image)
+        # Draw detections
+        combined_img = model.draw_masks(image)
+        st.info(f'Prediction time: {time() - start}s')
+        st.image(combined_img, channels='RGB', use_column_width=True)
+        cropped_images = process_output_masks(image, masks)
+        for im in cropped_images:
+            st.image(im, channels='RGB', use_column_width=True)
 
         #if combined_img is not None:
         #    result = Image.fromarray(combined_img.astype('uint8'), 'RGB')
@@ -99,21 +94,7 @@ def main(input_file, procedure):
 '''
 # Document scanner
 '''
+file_upload = st.file_uploader('Upload Document Image:', type=['jpg', 'jpeg', 'png'])
 
-procedure_selected = st.radio('Select Scanning Procedure:', ('Traditional', 'Deep Learning'), index=1, horizontal=True)
-
-tab1, tab2 = st.tabs(['Upload a Document', 'Capture Document'])
-
-with tab1:
-    file_upload = st.file_uploader('Upload Document Image:', type=['jpg', 'jpeg', 'png'])
-
-    if file_upload is not None:
-        _ = main(input_file=file_upload, procedure=procedure_selected)
-with tab2:
-    run = st.checkbox('Start Camera')
-
-    if run:
-        file_upload = st.camera_input('Capture Document', disabled=not run)
-        if file_upload is not None:
-            pass
-          #_ = main(input_file=file_upload, procedure=procedure_selected, image_size=IMAGE_SIZE)
+if file_upload is not None:
+    _ = main(input_file=file_upload)

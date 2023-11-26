@@ -33,6 +33,29 @@ def load_model(model_path, conf_thres=0.7, iou_thres=0.3):
     return YOLOseg(model_path, conf_thres, iou_thres)
 
 
+def process_output_masks(image, masks):
+    result = []
+    for mask in masks:
+        cropped = (np.stack((mask, ) * 3, axis=-1) * image)
+        mask = (mask * 255.0).astype(np.uint8)
+        contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        contour = sorted(contours, key=cv2.contourArea, reverse=True)[0]
+        rectangle = np.zeros_like(mask)
+        (x, y, w, h) = cv2.boundingRect(contour)
+        if w > 80 and h > 80:
+            cv2.rectangle(rectangle, (x, y), (x + w, y + h), (255), -1)
+            median_values = np.median(cropped[y : y + h, x : x + w, :], axis=[0, 1]).astype(np.uint8).tolist()
+        area_to_fill = np.stack((np.abs(rectangle - mask),) * 3, axis=-1)
+        filled = (area_to_fill / 255.0) * median_values
+        restored_corners = filled + cropped
+        document = (restored_corners[y : y + h, x : x + w, :]).astype(np.uint8)
+        document = cv2.copyMakeBorder(document, *[50 for _ in range(4)], cv2.BORDER_CONSTANT, value=median_values) #, value=[0, 0,])
+        document = cv2.cvtColor(document, cv2.COLOR_BGR2RGB)
+        result.append(document)
+        #cv2_imshow(document)
+    return result
+
+
 model = YOLOseg(model_path, conf_thres=conf_thres, iou_thres=iou_thres)
 
 
@@ -55,18 +78,21 @@ def main(input_file, procedure):
             combined_img = model.draw_masks(image)
             st.info(f'Prediction time: {time() - start}s')
             st.image(combined_img, channels='RGB', use_column_width=True)
+            cropped_images = process_output_masks(image, masks)
+            for im in cropped_images:
+                st.image(im, channels='RGB', use_column_width=True)
 
-        if combined_img is not None:
-            result = Image.fromarray(combined_img.astype('uint8'), 'RGB')
+        #if combined_img is not None:
+        #    result = Image.fromarray(combined_img.astype('uint8'), 'RGB')
             #img = Image.open(result)
-            buf = BytesIO()
-            result.save(buf, format='PNG')
-            byte_img = buf.getvalue() 
-            st.download_button(
-                label='Download image',
-                data=byte_img,
-                mime='image/png'
-            )
+        #    buf = BytesIO()
+        #    result.save(buf, format='PNG')
+        #    byte_img = buf.getvalue() 
+        #    st.download_button(
+        #        label='Download image',
+        #        data=byte_img,
+        #        mime='image/png'
+        #    )
 
 '''
 # Document scanner

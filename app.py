@@ -12,7 +12,7 @@ import streamlit as st
 # ------------------------------------------------------------
 
 model_path = 'best_q.onnx'
-conf_thres=0.7
+conf_thres=0.5
 iou_thres=0.3
 
 # ------------------------------------------------------------
@@ -51,7 +51,7 @@ def process_output_masks(image, masks):
         restored_corners = filled + cropped
         document = (restored_corners[y : y + h, x : x + w, :]).astype(np.uint8)
         document = cv2.copyMakeBorder(document, *[50 for _ in range(4)], cv2.BORDER_CONSTANT, value=median_values) #, value=[0, 0,])
-        document = cv2.cvtColor(document, cv2.COLOR_BGR2RGB)
+        #document = cv2.cvtColor(document, cv2.COLOR_BGR2RGB)
         result.append(document)
         #cv2_imshow(document)
     return result

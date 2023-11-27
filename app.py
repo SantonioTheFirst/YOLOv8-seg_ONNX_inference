@@ -12,8 +12,8 @@ import streamlit as st
 # ------------------------------------------------------------
 
 model_path = 'best_q.onnx'
-conf_thres=0.5
-iou_thres=0.3
+#conf_thres=0.5
+#iou_thres=0.3
 
 # ------------------------------------------------------------
 
@@ -28,7 +28,7 @@ st.set_page_config(
 )
 
 
-@st.cache
+#@st.cache
 def load_model(model_path, conf_thres=0.7, iou_thres=0.3):
     return YOLOseg(model_path, conf_thres, iou_thres)
 
@@ -56,10 +56,10 @@ def process_output_masks(image, masks):
     return result
 
 
-model = YOLOseg(model_path, conf_thres=conf_thres, iou_thres=iou_thres)
+#model = YOLOseg(model_path, conf_thres=conf_thres, iou_thres=iou_thres)
 
 
-def main(input_file):
+def main(input_file, model):
     file_bytes = np.asarray(bytearray(input_file.read()), dtype=np.uint8)  # Read bytes
     image = cv2.cvtColor(cv2.imdecode(file_bytes, 1), cv2.COLOR_BGR2RGB)
     col1, col2 = st.columns((1, 1))
@@ -98,4 +98,8 @@ def main(input_file):
 file_upload = st.file_uploader('Upload Document Image:', type=['jpg', 'jpeg', 'png'])
 
 if file_upload is not None:
-    _ = main(input_file=file_upload)
+    conf_thres = st.slider('Confidence threshold', min_value=0.0, max_value=100.0, value=0.5, step=0.01)
+    iou_thres = st.slider('Intersection over union Threshold for non maximum suppresion', min_value=0.0, max_value=1.0, value=0.3, step=0.01)
+    with button('Load model with params'):
+        model = YOLOseg(model_path, conf_thres=conf_thres, iou_thres=iou_thres)
+        _ = main(file_Upload, model)

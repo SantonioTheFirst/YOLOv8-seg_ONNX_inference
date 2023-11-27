@@ -109,4 +109,4 @@ if file_upload is not None:
     st.info(f'Confidence threshold: {conf_thres}\nIoU: {iou_thres}')
     if st.button('Load model with params', type='primary'):
         model = YOLOseg(model_path, conf_thres=conf_thres, iou_thres=iou_thres)
-        _ = main(file_Upload, model)
+        _ = main(file_upload, model)

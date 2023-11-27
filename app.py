@@ -100,6 +100,6 @@ file_upload = st.file_uploader('Upload Document Image:', type=['jpg', 'jpeg', 'p
 if file_upload is not None:
     conf_thres = st.slider('Confidence threshold', min_value=0.0, max_value=100.0, value=0.5, step=0.01)
     iou_thres = st.slider('Intersection over union Threshold for non maximum suppresion', min_value=0.0, max_value=1.0, value=0.3, step=0.01)
-    with button('Load model with params'):
+    with st.button('Load model with params'):
         model = YOLOseg(model_path, conf_thres=conf_thres, iou_thres=iou_thres)
         _ = main(file_Upload, model)

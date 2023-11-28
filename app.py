@@ -105,8 +105,10 @@ if file_upload is not None:
         conf_max_val = 1.0
         conf_step = 0.01
     conf_thres = st.slider('Confidence threshold', min_value=0.0, max_value=conf_max_val, value=0.5, step=conf_step)
-    iou_thres = st.slider('Intersection over union Threshold for non maximum suppresion', min_value=0.0, max_value=1.0, value=0.3, step=0.01)  
-    st.info(f'Confidence threshold: {conf_thres}\nIoU: {iou_thres}')
+    iou_thres = st.slider('Intersection over union Threshold for non maximum suppresion', min_value=0.0, max_value=1.0, value=0.3, step=0.01)
+    info = f'''Confidence threshold: {conf_thres},
+    IoU: {iou_thres}'''
+    st.info(info)
     if st.button('Load model with params', type='primary'):
         model = YOLOseg(model_path, conf_thres=conf_thres, iou_thres=iou_thres)
         _ = main(file_upload, model)

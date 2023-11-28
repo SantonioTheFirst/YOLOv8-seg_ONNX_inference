@@ -7,7 +7,7 @@ from utils import nms, sigmoid, xywh2xyxy, draw_detections
 
 class YOLOseg:
 
-    def __init__(self, path, conf_thres=0.7, iou_thres=0.5, num_masks=32):
+    def __init__(self, path, num_masks=32):
         #self.conf_threshold = conf_thres
         #self.iou_threshold = iou_thres
         self.num_masks = num_masks

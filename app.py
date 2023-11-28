@@ -95,7 +95,7 @@ def main(input_file, model, conf_thres, iou_thres):
 '''
 # Document scanner
 '''
-model = load_model(model_path) 
+model = YOLOseg(model_path) #load_model(model_path) 
 file_upload = st.file_uploader('Upload Document Image:', type=['jpg', 'jpeg', 'png'])
 
 if file_upload is not None:

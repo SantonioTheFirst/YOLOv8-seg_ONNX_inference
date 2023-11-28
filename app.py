@@ -30,7 +30,8 @@ st.set_page_config(
 
 @st.cache
 def load_model(model_path):
-    return YOLOseg(model_path)
+    model = YOLOseg(model_path)
+    return model
 
 
 def process_output_masks(image, masks):
@@ -95,7 +96,7 @@ def main(input_file, model, conf_thres, iou_thres):
 '''
 # Document scanner
 '''
-model = YOLOseg(model_path) #load_model(model_path) 
+model = load_model(model_path) #YOLOseg(model_path) #load_model(model_path) 
 file_upload = st.file_uploader('Upload Document Image:', type=['jpg', 'jpeg', 'png'])
 
 if file_upload is not None:
@@ -106,7 +107,7 @@ if file_upload is not None:
         conf_max_val = 1.0
         conf_step = 0.01
     conf_thres = st.slider('Confidence threshold', min_value=0.0, max_value=conf_max_val, value=0.5, step=conf_step)
-    iou_thres = st.slider('Intersection over union Threshold for non maximum suppresion', min_value=0.0, max_value=1.0, value=0.3, step=0.01)
+    iou_thres = st.slider('Intersection over union threshold for non maximum suppresion', min_value=0.0, max_value=1.0, value=0.3, step=0.01)
     info = f'''Confidence threshold: {conf_thres},
     IoU: {iou_thres}'''
     st.info(info)

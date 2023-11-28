@@ -44,7 +44,7 @@ def process_output_masks(image, masks):
         contour = sorted(contours, key=cv2.contourArea, reverse=True)[0]
         peri = cv2.arcLength(contour, True)
         approx = cv2.approxPolyDP(contour, 0.02 * peri, True)
-        st.image(cv2.drawContours(np.zeros_like(mask), approx, -1, (255), 5))
+        st.image(cv2.drawContours(image, contour, -1, (255), 5))
         rectangle = np.zeros_like(mask)
         (x, y, w, h) = cv2.boundingRect(contour)
         if w > 80 and h > 80:

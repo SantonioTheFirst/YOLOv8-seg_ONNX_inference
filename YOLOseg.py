@@ -8,15 +8,15 @@ from utils import nms, sigmoid, xywh2xyxy, draw_detections
 class YOLOseg:
 
     def __init__(self, path, conf_thres=0.7, iou_thres=0.5, num_masks=32):
-        self.conf_threshold = conf_thres
-        self.iou_threshold = iou_thres
+        #self.conf_threshold = conf_thres
+        #self.iou_threshold = iou_thres
         self.num_masks = num_masks
 
         # Initialize model
         self.initialize_model(path)
 
-    def __call__(self, image):
-        return self.segment_objects(image)
+    def __call__(self, image, conf_thres=0.7, iou_thres=0.5):
+        return self.segment_objects(image, conf_thres, iou_thres)
 
     def initialize_model(self, path):
         self.options = onnxruntime.SessionOptions()
@@ -29,13 +29,13 @@ class YOLOseg:
         self.get_input_details()
         self.get_output_details()
 
-    def segment_objects(self, image):
+    def segment_objects(self, image, conf_thres, iou_thres):
         input_tensor = self.prepare_input(image)
 
         # Perform inference on the image
         outputs = self.inference(input_tensor)
 
-        self.boxes, self.scores, self.class_ids, mask_pred = self.process_box_output(outputs[0])
+        self.boxes, self.scores, self.class_ids, mask_pred = self.process_box_output(outputs[0], conf_thres, iou_thres)
         self.mask_maps = self.process_mask_output(mask_pred, outputs[1])
 
         return self.boxes, self.scores, self.class_ids, self.mask_maps
@@ -62,15 +62,15 @@ class YOLOseg:
         # print(f"Inference time: {(time.perf_counter() - start)*1000:.2f} ms")
         return outputs
 
-    def process_box_output(self, box_output):
+    def process_box_output(self, box_output, conf_thres, iou_thres):
 
         predictions = np.squeeze(box_output).T
         num_classes = box_output.shape[1] - self.num_masks - 4
 
         # Filter out object confidence scores below threshold
         scores = np.max(predictions[:, 4: 4 + num_classes], axis=1)
-        predictions = predictions[scores > self.conf_threshold, :]
-        scores = scores[scores > self.conf_threshold]
+        predictions = predictions[scores > conf_thres, :]
+        scores = scores[scores > conf_thres]
 
         if len(scores) == 0:
             return [], [], [], np.array([])
@@ -85,7 +85,7 @@ class YOLOseg:
         boxes = self.extract_boxes(box_predictions)
 
         # Apply non-maxima suppression to suppress weak, overlapping bounding boxes
-        indices = nms(boxes, scores, self.iou_threshold)
+        indices = nms(boxes, scores, iou_thres)
 
         return boxes[indices], scores[indices], class_ids[indices], mask_predictions[indices]
 

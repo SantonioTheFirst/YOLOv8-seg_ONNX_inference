@@ -28,9 +28,9 @@ st.set_page_config(
 )
 
 
-#@st.cache
-def load_model(model_path, conf_thres=0.7, iou_thres=0.3):
-    return YOLOseg(model_path, conf_thres, iou_thres)
+@st.cache
+def load_model(model_path):
+    return YOLOseg(model_path)
 
 
 def process_output_masks(image, masks):
@@ -59,7 +59,7 @@ def process_output_masks(image, masks):
 #model = YOLOseg(model_path, conf_thres=conf_thres, iou_thres=iou_thres)
 
 
-def main(input_file, model):
+def main(input_file, model, conf_thres, iou_thres):
     file_bytes = np.asarray(bytearray(input_file.read()), dtype=np.uint8)  # Read bytes
     image = cv2.cvtColor(cv2.imdecode(file_bytes, 1), cv2.COLOR_BGR2RGB)
     col1, col2 = st.columns((1, 1))
@@ -70,7 +70,7 @@ def main(input_file, model):
     with col2:
         st.title('Scanned')
         start = time()
-        boxes, scores, class_ids, masks = model(image)
+        boxes, scores, class_ids, masks = model(image, conf_thres, iou_thres)
         # Draw detections
         combined_img = model.draw_masks(image)
         st.info(f'Prediction time: {time() - start}s')
@@ -95,6 +95,7 @@ def main(input_file, model):
 '''
 # Document scanner
 '''
+model = load_model(model_path) 
 file_upload = st.file_uploader('Upload Document Image:', type=['jpg', 'jpeg', 'png'])
 
 if file_upload is not None:
@@ -109,6 +110,5 @@ if file_upload is not None:
     info = f'''Confidence threshold: {conf_thres},
     IoU: {iou_thres}'''
     st.info(info)
-    if st.button('Load model with params', type='primary'):
-        model = YOLOseg(model_path, conf_thres=conf_thres, iou_thres=iou_thres)
-        _ = main(file_upload, model)
+    if st.button('Predict with params', type='primary'):
+        _ = main(file_upload, model, conf_thres, iou_thres)

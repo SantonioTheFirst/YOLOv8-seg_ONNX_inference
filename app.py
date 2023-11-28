@@ -96,7 +96,7 @@ def main(input_file, model, conf_thres, iou_thres):
 '''
 # Document scanner
 '''
-model = load_model(model_path) #YOLOseg(model_path) #load_model(model_path) 
+model = YOLOseg(model_path) #load_model(model_path) 
 file_upload = st.file_uploader('Upload Document Image:', type=['jpg', 'jpeg', 'png'])
 
 if file_upload is not None:
@@ -111,5 +111,5 @@ if file_upload is not None:
     info = f'''Confidence threshold: {conf_thres},
     IoU: {iou_thres}'''
     st.info(info)
-    if st.button('Predict with params', type='primary'):
-        _ = main(file_upload, model, conf_thres, iou_thres)
+    #if st.button('Predict with params', type='primary'):
+    _ = main(file_upload, model, conf_thres, iou_thres)

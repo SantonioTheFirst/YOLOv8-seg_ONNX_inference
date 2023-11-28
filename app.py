@@ -38,6 +38,7 @@ def process_output_masks(image, masks):
     result = []
     for i, mask in enumerate(masks):
         cropped = (np.stack((mask, ) * 3, axis=-1) * image)
+        mask = cv2.erode(mask, kernel=(3, 3), iterations=2)
         mask = (mask * 255.0).astype(np.uint8)
         contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         contour = sorted(contours, key=cv2.contourArea, reverse=True)[0]

@@ -37,15 +37,21 @@ def load_model(model_path):
 
 def process_output_masks(image, masks):
     result = []
+    masks *= 255.0
     for i, mask in enumerate(masks):
-        cropped = (np.stack((mask, ) * 3, axis=-1) * image)
+        #cropped = (np.stack((mask, ) * 3, axis=-1) * image)
         #mask = cv2.erode(mask, kernel=(3, 3), iterations=2)
-        mask = (mask * 255.0).astype(np.uint8)
+        #mask = (mask * 255.0).astype(np.uint8)
         contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         contour = sorted(contours, key=cv2.contourArea, reverse=True)[0]
-        peri = cv2.arcLength(contour, True)
-        approx = cv2.approxPolyDP(contour, 0.02 * peri, True)
-        st.image(cv2.drawContours(image, contour, -1, (255), 5))
+        black = np.zeros_like(mask)
+        cv2.drawContours(black, (contour, ), -1, (1), -1)
+        kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (17, 17))
+        opening = cv2.morphologyEx(black, cv2.MORPH_OPEN, kernel=kernel, iterations=5)
+        cropped = (np.stack((opening,) * 3, axis=-1) * image)
+        #peri = cv2.arcLength(contour, True)
+        #approx = cv2.approxPolyDP(contour, 0.02 * peri, True)
+        #st.image(cv2.drawContours(image, contour, -1, (255), 5))
         rectangle = np.zeros_like(mask)
         (x, y, w, h) = cv2.boundingRect(contour)
         if w > 80 and h > 80:

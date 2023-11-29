@@ -11,7 +11,8 @@ import streamlit as st
 
 # ------------------------------------------------------------
 
-model_path = 'best_q.onnx'
+model_path_v1 = 'best_q.onnx'
+model_path_v2 = 'best_q_v2.onnx'
 #conf_thres=0.5
 #iou_thres=0.3
 
@@ -100,10 +101,13 @@ def main(input_file, model, conf_thres, iou_thres):
 '''
 # Document scanner
 '''
-model = YOLOseg(model_path) #load_model(model_path) 
 file_upload = st.file_uploader('Upload Document Image:', type=['jpg', 'jpeg', 'png'])
 
 if file_upload is not None:
+    if st.checkbox('Use v2 model weights (40 + 40) epochs'):
+        model = YOLOseg(model_path_v2) #load_model(model_path)
+    else:
+        model = YOLOseg(model_path_v1) #load_model(model_path) 
     if st.checkbox('Confidence $\in$ [0.0, 100.0]'):
         conf_max_val = 100.0
         conf_step = 0.1

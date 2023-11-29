@@ -51,6 +51,7 @@ def process_output_masks(image, masks):
         opening = cv2.morphologyEx(black, cv2.MORPH_OPEN, kernel=kernel, iterations=5)
         st.image(np.stack((opening,) * 3, axis=-1) * 255)
         cropped = (np.stack((opening,) * 3, axis=-1) * image)
+        st.info(f'{cropped.max()}')
         #peri = cv2.arcLength(contour, True)
         #approx = cv2.approxPolyDP(contour, 0.02 * peri, True)
         #st.image(cv2.drawContours(image, contour, -1, (255), 5))
@@ -59,8 +60,10 @@ def process_output_masks(image, masks):
         if w > 80 and h > 80:
             cv2.rectangle(rectangle, (x, y), (x + w, y + h), (255), -1)
             median_values = np.median(cropped[y : y + h, x : x + w, :], axis=[0, 1]).astype(np.uint8).tolist()
+        st.info(f'{rectangle.max()}')
         area_to_fill = np.stack((np.abs(rectangle - opening),) * 3, axis=-1)
-        filled = (area_to_fill / 255.0) * median_values
+        st.info(f'{area_to_fill.max()}')
+        filled = ((area_to_fill / 255) * median_values).astype(np.uint8)
         restored_corners = filled + cropped
         document = (restored_corners[y : y + h, x : x + w, :]).astype(np.uint8)
         document = cv2.copyMakeBorder(document, *[50 for _ in range(4)], cv2.BORDER_CONSTANT, value=median_values) #, value=[0, 0,])

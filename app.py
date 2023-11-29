@@ -45,7 +45,7 @@ def process_output_masks(image, masks):
         cv2.drawContours(black, (contour, ), -1, (1), -1)
         kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (17, 17))
         opening = cv2.morphologyEx(black, cv2.MORPH_OPEN, kernel=kernel, iterations=5)
-        st.image(np.stack((opening,) * 3, axis=-1) * 255, caption='smoothed by morphology opening mask)
+        st.image(np.stack((opening,) * 3, axis=-1) * 255, caption='smoothed by morphology opening mask')
         cropped = (np.stack((opening,) * 3, axis=-1) * image)
         st.image(cropped, caption='cropped by smoothed mask image')
         rectangle = np.zeros_like(mask)

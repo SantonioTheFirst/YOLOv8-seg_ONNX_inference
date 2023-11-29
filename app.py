@@ -59,11 +59,11 @@ def process_output_masks(image, masks):
         rectangle = np.zeros_like(mask)
         (x, y, w, h) = cv2.boundingRect(contour)
         if w > 80 and h > 80:
-            cv2.rectangle(rectangle, (x, y), (x + w, y + h), (255), -1)
+            cv2.rectangle(rectangle, (x, y), (x + w, y + h), (1), -1)
             median_values = np.median(cropped[y : y + h, x : x + w, :], axis=[0, 1]).astype(np.uint8).tolist()
         #st.info(f'{rectangle.max()}')
         area_to_fill = np.stack((np.abs(rectangle - opening),) * 3, axis=-1)
-        st.image(area_to_fill)
+        st.image(area_to_fill, caption='area to fill')
         #st.info(f'{area_to_fill.max()}')
         filled = ((area_to_fill / 255) * median_values).astype(np.uint8)
         st.image(filled)

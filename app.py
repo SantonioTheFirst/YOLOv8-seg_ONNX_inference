@@ -63,9 +63,9 @@ def process_output_masks(image, masks):
             median_values = np.median(cropped[y : y + h, x : x + w, :], axis=[0, 1]).astype(np.uint8).tolist()
         #st.info(f'{rectangle.max()}')
         area_to_fill = np.stack((np.abs(rectangle - opening),) * 3, axis=-1)
-        st.image(area_to_fill, caption='area to fill')
+        st.image(area_to_fill * 255, caption='area to fill')
         #st.info(f'{area_to_fill.max()}')
-        filled = ((area_to_fill / 255) * median_values).astype(np.uint8)
+        filled = (area_to_fill * median_values).astype(np.uint8)
         st.image(filled)
         restored_corners = filled + cropped
         st.image(restored_corners)

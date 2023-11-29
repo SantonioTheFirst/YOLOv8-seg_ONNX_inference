@@ -51,6 +51,7 @@ def process_output_masks(image, masks):
         opening = cv2.morphologyEx(black, cv2.MORPH_OPEN, kernel=kernel, iterations=5)
         st.image(np.stack((opening,) * 3, axis=-1) * 255)
         cropped = (np.stack((opening,) * 3, axis=-1) * image)
+        st.image(cropped)
         #st.info(f'{cropped.max()}')
         #peri = cv2.arcLength(contour, True)
         #approx = cv2.approxPolyDP(contour, 0.02 * peri, True)

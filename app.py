@@ -37,7 +37,7 @@ def load_model(model_path):
 
 def process_output_masks(image, masks):
     result = []
-    masks *= 255.0
+    masks *= 255
     for i, mask in enumerate(masks):
         #cropped = (np.stack((mask, ) * 3, axis=-1) * image)
         #mask = cv2.erode(mask, kernel=(3, 3), iterations=2)

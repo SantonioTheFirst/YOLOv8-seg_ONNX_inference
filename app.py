@@ -39,43 +39,32 @@ def process_output_masks(image, masks):
     result = []
     masks = (masks * 255).astype(np.uint8)
     for i, mask in enumerate(masks):
-        #cropped = (np.stack((mask, ) * 3, axis=-1) * image)
-        #mask = cv2.erode(mask, kernel=(3, 3), iterations=2)
-        #mask = (mask * 255.0).astype(np.uint8)
-        #st.info(f'{mask.max()}, {mask.shape}')
         contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         contour = sorted(contours, key=cv2.contourArea, reverse=True)[0]
         black = np.zeros_like(mask)
         cv2.drawContours(black, (contour, ), -1, (1), -1)
         kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (17, 17))
         opening = cv2.morphologyEx(black, cv2.MORPH_OPEN, kernel=kernel, iterations=5)
-        st.image(np.stack((opening,) * 3, axis=-1) * 255)
+        st.image(np.stack((opening,) * 3, axis=-1) * 255, caption='smoothed by morphology opening mask)
         cropped = (np.stack((opening,) * 3, axis=-1) * image)
-        st.image(cropped)
-        #st.info(f'{cropped.max()}')
-        #peri = cv2.arcLength(contour, True)
-        #approx = cv2.approxPolyDP(contour, 0.02 * peri, True)
-        #st.image(cv2.drawContours(image, contour, -1, (255), 5))
+        st.image(cropped, caption='cropped by smoothed mask image')
         rectangle = np.zeros_like(mask)
         (x, y, w, h) = cv2.boundingRect(contour)
         if w > 80 and h > 80:
             cv2.rectangle(rectangle, (x, y), (x + w, y + h), (1), -1)
             median_values = np.median(cropped[y : y + h, x : x + w, :], axis=[0, 1]).astype(np.uint8).tolist()
-        #st.info(f'{rectangle.max()}')
         area_to_fill = np.stack((np.abs(rectangle - opening),) * 3, axis=-1)
-        st.image(area_to_fill * 255, caption='area to fill')
-        #st.info(f'{area_to_fill.max()}')
+        st.image(area_to_fill * 255, caption='area to fill with median value')
         filled = (area_to_fill * median_values).astype(np.uint8)
-        st.image(filled)
+        st.image(filled, caption='smoothed mask and bounding rectangle difference filled with median value')
         restored_corners = filled + cropped
-        st.image(restored_corners)
+        st.image(restored_corners, caption='restored corners by filling with median value')
         document = (restored_corners[y : y + h, x : x + w, :]).astype(np.uint8)
-        st.image(document)
+        st.image(document, 'document cropped by x, y of bounding rectangle')
         document = cv2.copyMakeBorder(document, *[50 for _ in range(4)], cv2.BORDER_CONSTANT, value=median_values) #, value=[0, 0,])
-        st.image(document)
+        st.image(document, 'document with border filled with median value')
         #document = cv2.cvtColor(document, cv2.COLOR_BGR2RGB)
         result.append(document)
-        #cv2_imshow(document)
     return result
 
 
@@ -88,7 +77,6 @@ def main(input_file, model, conf_thres, iou_thres):
     col1, col2 = st.columns((1, 1))
     with col1:
         st.title('Input')
-        #st.write(image.shape)
         st.image(image, channels='RGB', use_column_width=True)
     with col2:
         st.title('Scanned')

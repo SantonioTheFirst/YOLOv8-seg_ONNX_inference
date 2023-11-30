@@ -39,12 +39,12 @@ def process_output_masks(image, masks):
     result = []
     masks = (masks * 255).astype(np.uint8)
     for i, mask in enumerate(masks):
-        contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-        contour = sorted(contours, key=cv2.contourArea, reverse=True)[0]
-        black = np.zeros_like(mask)
-        cv2.drawContours(black, (contour, ), -1, (1), -1)
+        #contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        #contour = sorted(contours, key=cv2.contourArea, reverse=True)[0]
+        #black = np.zeros_like(mask)
+        #cv2.drawContours(black, (contour, ), -1, (1), -1)
         kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (17, 17))
-        opening = cv2.morphologyEx(black, cv2.MORPH_OPEN, kernel=kernel, iterations=5)
+        opening = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel=kernel, iterations=5)
         st.image(np.stack((opening,) * 3, axis=-1) * 255, caption='smoothed by morphology opening mask')
         cropped = (np.stack((opening,) * 3, axis=-1) * image)
         st.image(cropped, caption='cropped by smoothed mask image')
@@ -73,7 +73,7 @@ def process_output_masks(image, masks):
 
 def main(input_file, model, conf_thres, iou_thres):
     file_bytes = np.asarray(bytearray(input_file.read()), dtype=np.uint8)  # Read bytes
-    image = cv2.cvtColor(cv2.imdecode(file_bytes, 1), cv2.COLOR_BGR2RGB)
+    image = cv2.imdecode(file_bytes, 1)
     col1, col2 = st.columns((1, 1))
     with col1:
         st.title('Input')

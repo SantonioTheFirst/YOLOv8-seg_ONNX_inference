@@ -11,8 +11,8 @@ import streamlit as st
 
 # ------------------------------------------------------------
 
-model_q_path_40ep = 'best_q_40ep.onnx'
-model_q_path_80ep = 'best_q_80ep.onnx'
+model_q_path_40ep = 'best_q.onnx'
+model_q_path_80ep = 'best_q_v2.onnx'
 model_path_40ep = 'best_40ep.onnx'
 model_path_80ep = 'best_80ep.onnx'
 #conf_thres=0.5

@@ -117,7 +117,7 @@ if file_upload is not None:
     #    model = YOLOseg(model_path_v2) #load_model(model_path)
     #else:
     #    model = YOLOseg(model_path_v1) #load_model(model_path)
-    model_list = ['Nano, 40 epochs', 'Nano, 80 epochs', 'Nano, 40 epochs, quantized', 'Nano, 80 epochs, quantized']
+    model_list = ['Nano, 40 epochs', 'Nano, 80 epochs', 'Nano, 160 epochs', 'Nano, 40 epochs, quantized', 'Nano, 80 epochs, quantized', 'Nano, 160 epochs, quantized']
     option = st.selectbox(
         'What model would you like to use?',
         model_list
@@ -127,11 +127,15 @@ if file_upload is not None:
     elif option == model_list[1]:
         model_path = model_path_80ep
     elif option == model_list[2]:
-        model_path = model_q_path_40ep
+        model_path = model_path_160ep
     elif option == model_list[3]:
+        model_path = model_q_path_40ep
+    elif option == model_list[4]:
         model_path = model_q_path_80ep
+    elif option == model_list[5]:
+        model_path = model_q_path_160ep
     else:
-        model_path = model_q_path_80ep
+        model_path = model_q_path_160ep
     model = YOLOseg(model_path) 
     if st.checkbox('Confidence $\in$ [0.0, 100.0]'):
         conf_max_val = 100.0

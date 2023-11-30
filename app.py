@@ -115,18 +115,18 @@ if file_upload is not None:
     #    model = YOLOseg(model_path_v2) #load_model(model_path)
     #else:
     #    model = YOLOseg(model_path_v1) #load_model(model_path)
-    model_list = ('Nano, 40 epochs', 'Nano, 80 epochs', 'Nano, 40 epochs, quantized', 'Nano, 80 epochs, quantized')
+    model_list = ['Nano, 40 epochs', 'Nano, 80 epochs', 'Nano, 40 epochs, quantized', 'Nano, 80 epochs, quantized']
     option = st.selectbox(
         'What model would you like to use?',
         model_list
     )
     if option == model_list[0]:
         model_path = model_path_40ep
-    elif options == model_list[1]:
+    elif option == model_list[1]:
         model_path = model_path_80ep
-    elif options == model_list[2]:
+    elif option == model_list[2]:
         model_path = model_q_path_40ep
-    elif options == model_list[3]:
+    elif option == model_list[3]:
         model_path = model_q_path_80ep
     else:
         model_path = model_q_path_80ep

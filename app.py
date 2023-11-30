@@ -37,7 +37,7 @@ def load_model(model_path):
 
 def process_output_masks(image, masks):
     result = []
-    masks = (masks * 255).astype(np.uint8)
+    masks = masks.astype(np.uint8)
     for i, mask in enumerate(masks):
         #contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         #contour = sorted(contours, key=cv2.contourArea, reverse=True)[0]
@@ -45,11 +45,11 @@ def process_output_masks(image, masks):
         #cv2.drawContours(black, (contour, ), -1, (1), -1)
         kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (17, 17))
         opening = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel=kernel, iterations=5)
-        st.image(np.stack((opening,) * 3, axis=-1) * 255, caption='smoothed by morphology opening mask')
+        st.image(np.stack((opening * 255,) * 3, axis=-1), caption='smoothed by morphology opening mask')
         cropped = (np.stack((opening,) * 3, axis=-1) * image)
-        st.image(cropped, caption='cropped by smoothed mask image')
+        st.image(cropped, caption='cropped by smoothed mask image', channels='BGR')
         rectangle = np.zeros_like(mask)
-        (x, y, w, h) = cv2.boundingRect(contour)
+        (x, y, w, h) = cv2.boundingRect(mask)
         if w > 80 and h > 80:
             cv2.rectangle(rectangle, (x, y), (x + w, y + h), (1), -1)
             median_values = np.median(cropped[y : y + h, x : x + w, :], axis=[0, 1]).astype(np.uint8).tolist()

@@ -77,7 +77,7 @@ def main(input_file, model, conf_thres, iou_thres):
     col1, col2 = st.columns((1, 1))
     with col1:
         st.title('Input')
-        st.image(image, channels='RGB', use_column_width=True)
+        st.image(image, channels='BGR', use_column_width=True)
     with col2:
         st.title('Scanned')
         start = time()

@@ -56,13 +56,13 @@ def process_output_masks(image, masks):
         area_to_fill = np.stack((np.abs(rectangle - opening),) * 3, axis=-1)
         st.image(area_to_fill * 255, caption='area to fill with median value')
         filled = (area_to_fill * median_values).astype(np.uint8)
-        st.image(filled, caption='smoothed mask and bounding rectangle difference filled with median value')
+        st.image(filled, caption='smoothed mask and bounding rectangle difference filled with median value', channels='BGR')
         restored_corners = filled + cropped
-        st.image(restored_corners, caption='restored corners by filling with median value')
+        st.image(restored_corners, caption='restored corners by filling with median value', channels='BGR')
         document = (restored_corners[y : y + h, x : x + w, :]).astype(np.uint8)
-        st.image(document, 'document cropped by x, y of bounding rectangle')
+        st.image(document, 'document cropped by x, y of bounding rectangle', channels='BGR')
         document = cv2.copyMakeBorder(document, *[50 for _ in range(4)], cv2.BORDER_CONSTANT, value=median_values) #, value=[0, 0,])
-        st.image(document, 'document with border filled with median value')
+        st.image(document, 'document with border filled with median value', channels='BGR')
         #document = cv2.cvtColor(document, cv2.COLOR_BGR2RGB)
         result.append(document)
     return result
@@ -85,10 +85,10 @@ def main(input_file, model, conf_thres, iou_thres):
         # Draw detections
         combined_img = model.draw_masks(image)
         st.info(f'Prediction time: {time() - start}s')
-        st.image(combined_img, channels='RGB', use_column_width=True)
+        st.image(combined_img, channels='BGR', use_column_width=True)
         cropped_images = process_output_masks(image, masks)
         for im in cropped_images:
-            st.image(im, channels='RGB', use_column_width=True)
+            st.image(im, channels='BGR', use_column_width=True)
         st.info(f'Total time: {time() - start}s')
 
         #if combined_img is not None:

@@ -11,8 +11,10 @@ import streamlit as st
 
 # ------------------------------------------------------------
 
-model_path_v1 = 'best_q.onnx'
-model_path_v2 = 'best_q_v2.onnx'
+model_q_path_40ep = 'best_q_40ep.onnx'
+model_q_path_80ep = 'best_q_80ep.onnx'
+model_path_40ep = 'best_40ep.onnx'
+model_path_80ep = 'best_80ep.onnx'
 #conf_thres=0.5
 #iou_thres=0.3
 
@@ -109,10 +111,26 @@ def main(input_file, model, conf_thres, iou_thres):
 file_upload = st.file_uploader('Upload Document Image:', type=['jpg', 'jpeg', 'png'])
 
 if file_upload is not None:
-    if st.checkbox('Use v2 model weights (40 + 40) epochs'):
-        model = YOLOseg(model_path_v2) #load_model(model_path)
+    #if st.checkbox('Use v2 model weights (40 + 40) epochs'):
+    #    model = YOLOseg(model_path_v2) #load_model(model_path)
+    #else:
+    #    model = YOLOseg(model_path_v1) #load_model(model_path)
+    model_list = ('Nano, 40 epochs', 'Nano, 80 epochs', 'Nano, 40 epochs, quantized', 'Nano, 80 epochs, quantized')
+    option = st.selectbox(
+        'What model would you like to use?',
+        model_list
+    )
+    if option == model_list[0]:
+        model_path = model_path_40ep
+    elif options == model_list[1]:
+        model_path = model_path_80ep
+    elif options == model_list[2]:
+        model_path = model_q_path_40ep
+    elif options == model_list[3]:
+        model_path = model_q_path_80ep
     else:
-        model = YOLOseg(model_path_v1) #load_model(model_path) 
+        model_path = model_q_path_80ep
+    model = YOLOseg(model_path) 
     if st.checkbox('Confidence $\in$ [0.0, 100.0]'):
         conf_max_val = 100.0
         conf_step = 0.1

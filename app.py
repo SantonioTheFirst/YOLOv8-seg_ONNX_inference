@@ -85,14 +85,15 @@ def main(input_file, model, conf_thres, iou_thres):
     with col2:
         st.title('Scanned')
         start = time()
-        boxes, scores, class_ids, masks = model(image, conf_thres, iou_thres)
-        # Draw detections
-        combined_img = model.draw_masks(image)
-        st.info(f'Prediction time: {time() - start}s')
-        st.image(combined_img, channels='BGR', use_column_width=True)
-        cropped_images = process_output_masks(image, masks)
-        for im in cropped_images:
-            st.image(im, channels='BGR', use_column_width=True)
+        with st.spinner('Some magic happens'):
+            boxes, scores, class_ids, masks = model(image, conf_thres, iou_thres)
+            # Draw detections
+            combined_img = model.draw_masks(image)
+            st.info(f'Prediction time: {time() - start}s')
+            st.image(combined_img, channels='BGR', use_column_width=True)
+            cropped_images = process_output_masks(image, masks)
+            for im in cropped_images:
+                st.image(im, channels='BGR', use_column_width=True)
         st.info(f'Total time: {time() - start}s')
 
         #if combined_img is not None:

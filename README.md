@@ -1,1 +1,1 @@
-# YOLOv8n-seg_ONNX_inference
+# YOLOv8-seg_ONNX_inference

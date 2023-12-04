@@ -39,6 +39,36 @@ def load_model(model_path):
     return model
 
 
+def morph_opening(mask, kernel_size=17, iterations=5):
+    kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (kernel_size, kernel_size))
+    opening = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel=kernel, iterations=iterations)
+    return opening
+
+
+def crop(image, mask):
+    return np.stack((mask,) * 3, axis=-1) * image
+
+
+def get_min_rectangle(mask):
+    rectangle = np.zeros_like(mask)
+    (x, y, w, h) = cv2.boundingRect(mask)
+        if w > 80 and h > 80:
+            cv2.rectangle(rectangle, (x, y), (x + w, y + h), (1), -1)
+    return rectangle, (x, y, w, h)
+
+
+def get_median_values(image):
+    return np.median(image, axis=[0, 1]).astype(np.uint8).tolist()
+
+
+def get_area_to_fill(mask, rectangle):
+    return np.stack((np.abs(rectangle - mask),) * 3, axis=-1)
+
+
+def fill_area_with_value(area, value):
+    return (area * value).astype(np.uint8)
+
+
 def process_output_masks(image, masks):
     result = []
     masks = masks.astype(np.uint8)
@@ -47,19 +77,15 @@ def process_output_masks(image, masks):
         #contour = sorted(contours, key=cv2.contourArea, reverse=True)[0]
         #black = np.zeros_like(mask)
         #cv2.drawContours(black, (contour, ), -1, (1), -1)
-        kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (17, 17))
-        opening = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel=kernel, iterations=5)
+        opening = morph_opening(mask)
         st.image(np.stack((opening * 255,) * 3, axis=-1), caption='smoothed by morphology opening mask')
-        cropped = (np.stack((opening,) * 3, axis=-1) * image)
+        cropped = crop(image, opening)
         st.image(cropped, caption='cropped by smoothed mask image', channels='BGR')
-        rectangle = np.zeros_like(mask)
-        (x, y, w, h) = cv2.boundingRect(mask)
-        if w > 80 and h > 80:
-            cv2.rectangle(rectangle, (x, y), (x + w, y + h), (1), -1)
-            median_values = np.median(cropped[y : y + h, x : x + w, :], axis=[0, 1]).astype(np.uint8).tolist()
-        area_to_fill = np.stack((np.abs(rectangle - opening),) * 3, axis=-1)
+        rectangle, (x, y, w, h) = get_min_rectangle(mask)
+        median_values = get_median_values(cropped[y : y + h, x : x + w, :])
+        area_to_fill = get_area_to_fill(mask, rectangle)
         st.image(area_to_fill * 255, caption='area to fill with median value')
-        filled = (area_to_fill * median_values).astype(np.uint8)
+        filled = fill_area_with_value(area_to_fill, median_values)
         st.image(filled, caption='smoothed mask and bounding rectangle difference filled with median value', channels='BGR')
         restored_corners = filled + cropped
         st.image(restored_corners, caption='restored corners by filling with median value', channels='BGR')

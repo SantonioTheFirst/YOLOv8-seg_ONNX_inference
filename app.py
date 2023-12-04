@@ -39,6 +39,12 @@ def load_model(model_path):
     return model
 
 
+def get_smooth_mask(mask, kernel_size=17, iterations=5):
+    kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (kernel_size, kernel_size))
+    opening = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel=kernel, iterations=iterations)
+    return opening
+         
+
 def process_output_masks(image, masks):
     result = []
     masks = masks.astype(np.uint8)
@@ -47,8 +53,9 @@ def process_output_masks(image, masks):
         #contour = sorted(contours, key=cv2.contourArea, reverse=True)[0]
         #black = np.zeros_like(mask)
         #cv2.drawContours(black, (contour, ), -1, (1), -1)
-        kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (17, 17))
-        opening = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel=kernel, iterations=5)
+        #kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (17, 17))
+        #opening = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel=kernel, iterations=5)
+        opening = get_smooth_mask(mask)
         st.image(np.stack((opening * 255,) * 3, axis=-1), caption='smoothed by morphology opening mask')
         cropped = (np.stack((opening,) * 3, axis=-1) * image)
         st.image(cropped, caption='cropped by smoothed mask image', channels='BGR')

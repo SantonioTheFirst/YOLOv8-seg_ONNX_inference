@@ -3,7 +3,7 @@ import cv2
 import onnxruntime
 import math
 from utils import nms, sigmoid, xywh2xyxy, draw_detections
-import streamlit as st
+#import streamlit as st
 
 
 class YOLOseg:
@@ -25,7 +25,7 @@ class YOLOseg:
         self.providers = onnxruntime.get_available_providers()
         self.session = onnxruntime.InferenceSession(path, self.options, providers=self.providers)
         self.session.disable_fallback()
-        self.cv2model = cv2.dnn.readNetFromONNX(path)
+        #self.cv2model = cv2.dnn.readNetFromONNX(path)
 
         # Get model info
         self.get_input_details()
@@ -36,24 +36,24 @@ class YOLOseg:
 
         # Perform inference on the image
         outputs = self.inference(input_tensor)
-        st.info(f'{type(outputs)}, {len(outputs)}, {outputs[0].shape}, {outputs[1].shape}')
+        #st.info(f'{type(outputs)}, {len(outputs)}, {outputs[0].shape}, {outputs[1].shape}')
 
         #cv2
-        [height, width, _] = image.shape
+        #[height, width, _] = image.shape
 
         # Prepare a square image for inference
-        length = max((height, width))
-        im = np.zeros((length, length, 3), np.uint8)
-        im[0:height, 0:width] = image
+        #length = max((height, width))
+        #im = np.zeros((length, length, 3), np.uint8)
+        #im[0:height, 0:width] = image
 
         # Calculate scale factor
-        scale = length / 640
-        blob = cv2.dnn.blobFromImage(im, scalefactor=1 / 255, size=(640, 640), swapRB=True)
-        self.cv2model.setInput(blob)
+        #scale = length / 640
+        #blob = cv2.dnn.blobFromImage(im, scalefactor=1 / 255, size=(640, 640), swapRB=True)
+        #self.cv2model.setInput(blob)
 
         # Perform inference
-        outputs = self.cv2model.forward()
-        st.info(f'{type(outputs)}, {len(outputs)}, {outputs[0].shape}')
+        #outputs = self.cv2model.forward()
+        #st.info(f'{type(outputs)}, {len(outputs)}, {outputs[0].shape}')
 
         # Prepare output array
         #outputs = np.array([cv2.transpose(outputs[0])]) 

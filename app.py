@@ -107,6 +107,7 @@ def process_output_masks(image, masks, boxes, border):
         document = cv2.copyMakeBorder(document, *[border for _ in range(4)], cv2.BORDER_CONSTANT, value=median_values) #, value=[0, 0,])
         st.image(document, 'document with border filled with median value', channels='BGR')
         #document = cv2.cvtColor(document, cv2.COLOR_BGR2RGB)
+        document = remove_shadows(document)
         result.append(document)
     return result
 
@@ -123,10 +124,9 @@ def main(input_file, model, conf_thres, iou_thres):
         st.image(image, channels='BGR', use_column_width=True)
     with col2:
         st.title('Scanned')
-        st.image(remove_shadows(image), channels='BGR', caption='removed shadows')
+        #st.image(remove_shadows(image), channels='BGR', caption='removed shadows')
         start = time()
         boxes, scores, class_ids, masks = model(image, conf_thres, iou_thres)
-        st.info(boxes)
         # Draw detections
         combined_img = model.draw_masks(image)
         st.info(f'Prediction time: {time() - start}s')

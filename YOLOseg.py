@@ -37,7 +37,7 @@ class YOLOseg:
         outputs = self.inference(input_tensor)
 
         #cv2
-        blob = cv2.dnn.blobFromImage(input_tensor, size=(640, 640))
+        blob = cv2.dnn.blobFromImage(input_tensor)
         self.cv2model.setInput(blob)
 
         # Perform inference

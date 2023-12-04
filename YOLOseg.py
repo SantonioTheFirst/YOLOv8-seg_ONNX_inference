@@ -53,7 +53,7 @@ class YOLOseg:
 
         # Perform inference
         outputs = self.cv2model.forward()
-        st.info(f'{type(outputs)}, {len(outputs)}, {outputs[0].shape}, {outputs[1].shape}')
+        st.info(f'{type(outputs)}, {len(outputs)}, {outputs[0].shape}')
 
         # Prepare output array
         #outputs = np.array([cv2.transpose(outputs[0])]) 

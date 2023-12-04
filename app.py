@@ -51,9 +51,7 @@ def crop(img, mask):
 
 def get_min_rectangle(mask, box):
     rectangle = np.zeros_like(mask)
-    st.info(box)
-    st.info(type(box))
-    x1, y1, x2, y2 = box.astype(np.uint8)
+    x1, y1, x2, y2 = box.astype(int)
     cv2.rectangle(rectangle, (x1, y1), (x2, y2), (1), -1)
     return rectangle, (x1, y1, x2, y2)
 

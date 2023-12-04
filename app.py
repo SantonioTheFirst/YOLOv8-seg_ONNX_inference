@@ -49,22 +49,23 @@ def crop(img, mask):
     return np.stack((mask,) * 3, axis=-1) * img
 
 
-def get_min_rectangle(mask):
-    rectangle = np.zeros_like(mask)
-    (x, y, w, h) = cv2.boundingRect(mask)
-    if w > 80 and h > 80:
-        cv2.rectangle(rectangle, (x, y), (x + w, y + h), (1), -1)
-    return rectangle, (x, y, w, h)
+def get_min_rectangle(mask, box):
+    #rectangle = np.zeros_like(mask)
+    #(x, y, w, h) = cv2.boundingRect(mask)
+    #if w > 80 and h > 80:
+    x1, y1, x2, y2 = box
+    cv2.rectangle(rectangle, (x1, y1), (x2, y2), (1), -1)
+    return rectangle, (x1, y1, x2, y2)
 
 
 def get_median_values(img):
     return np.median(img, axis=[0, 1]).astype(np.uint8).tolist()
             
          
-def process_output_masks(image, masks):
+def process_output_masks(image, masks, boxes, border):
     result = []
     masks = masks.astype(np.uint8)
-    for i, mask in enumerate(masks):
+    for i, mask, box in enumerate(zip(masks, boxes)):
         #contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         #contour = sorted(contours, key=cv2.contourArea, reverse=True)[0]
         #black = np.zeros_like(mask)
@@ -79,17 +80,17 @@ def process_output_masks(image, masks):
         #(x, y, w, h) = cv2.boundingRect(mask)
         #if w > 80 and h > 80:
         #    cv2.rectangle(rectangle, (x, y), (x + w, y + h), (1), -1)
-        rectangle, (x, y, w, h) = get_min_rectangle(mask)
-        median_values = get_median_values(cropped[y : y + h, x : x + w, :])
+        rectangle, (x1, y1, x2, y2) = get_min_rectangle(mask, box)
+        median_values = get_median_values(cropped[y1 : y2, x1 : x2, :])
         area_to_fill = np.stack((np.abs(rectangle - opening),) * 3, axis=-1)
         st.image(area_to_fill * 255, caption='area to fill with median value')
         filled = (area_to_fill * median_values).astype(np.uint8)
         st.image(filled, caption='smoothed mask and bounding rectangle difference filled with median value', channels='BGR')
         restored_corners = filled + cropped
         st.image(restored_corners, caption='restored corners by filling with median value', channels='BGR')
-        document = (restored_corners[y : y + h, x : x + w, :]).astype(np.uint8)
+        document = (restored_corners[y1 : y2, x1 : x2, :]).astype(np.uint8)
         st.image(document, 'document cropped by x, y of bounding rectangle', channels='BGR')
-        document = cv2.copyMakeBorder(document, *[50 for _ in range(4)], cv2.BORDER_CONSTANT, value=median_values) #, value=[0, 0,])
+        document = cv2.copyMakeBorder(document, *[border for _ in range(4)], cv2.BORDER_CONSTANT, value=median_values) #, value=[0, 0,])
         st.image(document, 'document with border filled with median value', channels='BGR')
         #document = cv2.cvtColor(document, cv2.COLOR_BGR2RGB)
         result.append(document)
@@ -115,7 +116,7 @@ def main(input_file, model, conf_thres, iou_thres):
         combined_img = model.draw_masks(image)
         st.info(f'Prediction time: {time() - start}s')
         st.image(combined_img, channels='BGR', use_column_width=True)
-        cropped_images = process_output_masks(image, masks)
+        cropped_images = process_output_masks(image, masks, boxes, border=50)
         for im in cropped_images:
             st.image(im, channels='BGR', use_column_width=True)
         st.info(f'Total time: {time() - start}s')

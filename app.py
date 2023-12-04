@@ -65,7 +65,7 @@ def get_median_values(img):
 def process_output_masks(image, masks, boxes, border):
     result = []
     masks = masks.astype(np.uint8)
-    for i, mask, box in enumerate(zip(masks, boxes)):
+    for (mask, box) in zip(masks, boxes):
         #contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         #contour = sorted(contours, key=cv2.contourArea, reverse=True)[0]
         #black = np.zeros_like(mask)

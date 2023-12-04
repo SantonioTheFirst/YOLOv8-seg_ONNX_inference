@@ -43,6 +43,19 @@ def get_smooth_mask(mask, kernel_size=17, iterations=5):
     kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (kernel_size, kernel_size))
     opening = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel=kernel, iterations=iterations)
     return opening
+
+
+def crop(img, mask):
+    return np.stack((mask,) * 3, axis=-1) * image
+
+
+def get_min_rectangle(mask):
+    rectangle = np.zeros_like(mask)
+    (x, y, w, h) = cv2.boundingRect(mask)
+    if w > 80 and h > 80:
+        cv2.rectangle(rectangle, (x, y), (x + w, y + h), (1), -1)
+    return rectangle, (x, y, w, h)
+            
          
 
 def process_output_masks(image, masks):
@@ -57,13 +70,14 @@ def process_output_masks(image, masks):
         #opening = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel=kernel, iterations=5)
         opening = get_smooth_mask(mask)
         st.image(np.stack((opening * 255,) * 3, axis=-1), caption='smoothed by morphology opening mask')
-        cropped = (np.stack((opening,) * 3, axis=-1) * image)
+        cropped = crop(image, opening)
         st.image(cropped, caption='cropped by smoothed mask image', channels='BGR')
-        rectangle = np.zeros_like(mask)
-        (x, y, w, h) = cv2.boundingRect(mask)
-        if w > 80 and h > 80:
-            cv2.rectangle(rectangle, (x, y), (x + w, y + h), (1), -1)
-            median_values = np.median(cropped[y : y + h, x : x + w, :], axis=[0, 1]).astype(np.uint8).tolist()
+        #rectangle = np.zeros_like(mask)
+        #(x, y, w, h) = cv2.boundingRect(mask)
+        #if w > 80 and h > 80:
+        #    cv2.rectangle(rectangle, (x, y), (x + w, y + h), (1), -1)
+        rectangle, (x, y, w, h) = get_min_rectangle(mask)
+        median_values = np.median(cropped[y : y + h, x : x + w, :], axis=[0, 1]).astype(np.uint8).tolist()
         area_to_fill = np.stack((np.abs(rectangle - opening),) * 3, axis=-1)
         st.image(area_to_fill * 255, caption='area to fill with median value')
         filled = (area_to_fill * median_values).astype(np.uint8)

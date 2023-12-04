@@ -110,6 +110,7 @@ def main(input_file, model, conf_thres, iou_thres):
         st.title('Scanned')
         start = time()
         boxes, scores, class_ids, masks = model(image, conf_thres, iou_thres)
+        st.info(boxes)
         # Draw detections
         combined_img = model.draw_masks(image)
         st.info(f'Prediction time: {time() - start}s')

@@ -50,9 +50,7 @@ def crop(img, mask):
 
 
 def get_min_rectangle(mask, box):
-    #rectangle = np.zeros_like(mask)
-    #(x, y, w, h) = cv2.boundingRect(mask)
-    #if w > 80 and h > 80:
+    rectangle = np.zeros_like(mask)
     x1, y1, x2, y2 = box
     cv2.rectangle(rectangle, (x1, y1), (x2, y2), (1), -1)
     return rectangle, (x1, y1, x2, y2)

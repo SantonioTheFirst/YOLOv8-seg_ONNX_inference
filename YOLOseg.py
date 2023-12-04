@@ -36,7 +36,7 @@ class YOLOseg:
 
         # Perform inference on the image
         outputs = self.inference(input_tensor)
-        st.info(outputs.shape)
+        st.info(type(outputs), len(outputs), outputs[0].shape, outputs[1].shape)
 
         #cv2
         [height, width, _] = image.shape
@@ -53,7 +53,7 @@ class YOLOseg:
 
         # Perform inference
         outputs = self.cv2model.forward()
-        st.info(outputs.shape)
+        st.info(type(outputs), len(outputs), outputs[0].shape, outputs[1].shape)
 
         # Prepare output array
         #outputs = np.array([cv2.transpose(outputs[0])]) 

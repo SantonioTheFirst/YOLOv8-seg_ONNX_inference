@@ -55,9 +55,12 @@ def get_min_rectangle(mask):
     if w > 80 and h > 80:
         cv2.rectangle(rectangle, (x, y), (x + w, y + h), (1), -1)
     return rectangle, (x, y, w, h)
+
+
+def get_median_values(img):
+    return np.median(img, axis=[0, 1]).astype(np.uint8).tolist()
             
          
-
 def process_output_masks(image, masks):
     result = []
     masks = masks.astype(np.uint8)
@@ -77,7 +80,7 @@ def process_output_masks(image, masks):
         #if w > 80 and h > 80:
         #    cv2.rectangle(rectangle, (x, y), (x + w, y + h), (1), -1)
         rectangle, (x, y, w, h) = get_min_rectangle(mask)
-        median_values = np.median(cropped[y : y + h, x : x + w, :], axis=[0, 1]).astype(np.uint8).tolist()
+        median_values = get_median_values(cropped[y : y + h, x : x + w, :])
         area_to_fill = np.stack((np.abs(rectangle - opening),) * 3, axis=-1)
         st.image(area_to_fill * 255, caption='area to fill with median value')
         filled = (area_to_fill * median_values).astype(np.uint8)

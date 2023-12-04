@@ -37,7 +37,16 @@ class YOLOseg:
         outputs = self.inference(input_tensor)
 
         #cv2
-        blob = cv2.dnn.blobFromImage(input_tensor)
+        [height, width, _] = image.shape
+
+        # Prepare a square image for inference
+        length = max((height, width))
+        im = np.zeros((length, length, 3), np.uint8)
+        im[0:height, 0:width] = image
+
+        # Calculate scale factor
+        scale = length / 640
+        blob = cv2.dnn.blobFromImage(im, scalefactor=1 / 255, size=(640, 640), swapRB=True)
         self.cv2model.setInput(blob)
 
         # Perform inference

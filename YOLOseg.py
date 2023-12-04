@@ -24,6 +24,7 @@ class YOLOseg:
         self.providers = onnxruntime.get_available_providers()
         self.session = onnxruntime.InferenceSession(path, self.options, providers=self.providers)
         self.session.disable_fallback()
+        self.cv2model = cv2.dnn.readNetFromONNX(path)
 
         # Get model info
         self.get_input_details()
@@ -34,6 +35,16 @@ class YOLOseg:
 
         # Perform inference on the image
         outputs = self.inference(input_tensor)
+
+        #cv2
+        blob = cv2.dnn.blobFromImage(input_tensor, size=(640, 640))
+        self.cv2model.setInput(blob)
+
+        # Perform inference
+        outputs = self.cv2model.forward()
+
+        # Prepare output array
+        #outputs = np.array([cv2.transpose(outputs[0])]) 
 
         self.boxes, self.scores, self.class_ids, mask_pred = self.process_box_output(outputs[0], conf_thres, iou_thres)
         self.mask_maps = self.process_mask_output(mask_pred, outputs[1])

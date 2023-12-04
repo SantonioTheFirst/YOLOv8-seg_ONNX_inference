@@ -46,7 +46,7 @@ def get_smooth_mask(mask, kernel_size=17, iterations=5):
 
 
 def crop(img, mask):
-    return np.stack((mask,) * 3, axis=-1) * image
+    return np.stack((mask,) * 3, axis=-1) * img
 
 
 def get_min_rectangle(mask):

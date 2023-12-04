@@ -3,6 +3,7 @@ import cv2
 import onnxruntime
 import math
 from utils import nms, sigmoid, xywh2xyxy, draw_detections
+import streamlit as st
 
 
 class YOLOseg:
@@ -35,6 +36,7 @@ class YOLOseg:
 
         # Perform inference on the image
         outputs = self.inference(input_tensor)
+        st.info(outputs.shape)
 
         #cv2
         [height, width, _] = image.shape
@@ -51,6 +53,7 @@ class YOLOseg:
 
         # Perform inference
         outputs = self.cv2model.forward()
+        st.info(outputs.shape)
 
         # Prepare output array
         #outputs = np.array([cv2.transpose(outputs[0])]) 

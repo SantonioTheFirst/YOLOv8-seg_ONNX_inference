@@ -82,7 +82,7 @@ def process_output_masks(image, masks):
         cropped = crop(image, opening)
         st.image(cropped, caption='cropped by smoothed mask image', channels='BGR')
         rectangle, (x, y, w, h) = get_min_rectangle(mask)
-        st.image(rectane * 255, caption='rect')
+        st.image(rectangle * 255, caption='rect')
         median_values = get_median_values(cropped[y : y + h, x : x + w, :])
         area_to_fill = get_area_to_fill(mask, rectangle)
         st.image(area_to_fill * 255, caption='area to fill with median value')

@@ -52,8 +52,8 @@ def crop(image, mask):
 def get_min_rectangle(mask):
     rectangle = np.zeros_like(mask)
     (x, y, w, h) = cv2.boundingRect(mask)
-        if w > 80 and h > 80:
-            cv2.rectangle(rectangle, (x, y), (x + w, y + h), (1), -1)
+    if w > 80 and h > 80:
+        cv2.rectangle(rectangle, (x, y), (x + w, y + h), (1), -1)
     return rectangle, (x, y, w, h)
 
 

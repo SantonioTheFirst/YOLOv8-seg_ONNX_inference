@@ -177,7 +177,7 @@ if file_upload is not None:
         model_path = model_path_80ep_bg
     else:
         model_path = model_path_80ep_bg
-        st.info(f'model: {model_path}')
+    st.info(f'model: {model_path}')
     model = YOLOseg(model_path) 
     if st.checkbox('Confidence $\in$ [0.0, 100.0]'):
         conf_max_val = 100.0
@@ -185,8 +185,8 @@ if file_upload is not None:
     else:
         conf_max_val = 1.0
         conf_step = 0.01
-    conf_thres = st.slider('Confidence threshold', min_value=0.0, max_value=conf_max_val, value=0.3, step=conf_step)
-    iou_thres = st.slider('Intersection over union threshold for non maximum suppresion', min_value=0.0, max_value=1.0, value=0.3, step=0.01)
+    conf_thres = st.slider('Confidence threshold', min_value=0.0, max_value=conf_max_val, value=0.25, step=conf_step)
+    iou_thres = st.slider('Intersection over union threshold for non maximum suppresion', min_value=0.0, max_value=1.0, value=0.7, step=0.01)
     info = f'''Confidence threshold: {conf_thres},
     IoU: {iou_thres}'''
     st.info(info)

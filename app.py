@@ -177,6 +177,7 @@ if file_upload is not None:
         model_path = model_path_80ep_bg
     else:
         model_path = model_path_80ep_bg
+        st.info(f'model: {model_path}')
     model = YOLOseg(model_path) 
     if st.checkbox('Confidence $\in$ [0.0, 100.0]'):
         conf_max_val = 100.0

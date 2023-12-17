@@ -17,7 +17,7 @@ model_q_path_160ep = 'best_q_160ep.onnx'
 model_path_40ep = 'best_40ep.onnx'
 model_path_80ep = 'best_80ep.onnx'
 model_path_160ep = 'best_160ep.onnx'
-model_path_80ep_bg = '43972' #'best_80ep_bg.onnx'
+model_path_80ep_bg = '43973' #'best_80ep_bg.onnx'
 #conf_thres=0.5
 #iou_thres=0.3
 

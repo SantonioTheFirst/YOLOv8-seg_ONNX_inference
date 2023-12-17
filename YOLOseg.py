@@ -104,12 +104,14 @@ class YOLOseg:
 
         # Get the class with the highest confidence
         class_ids = np.argmax(box_predictions[:, 4:], axis=1)
+        st.info(', '.join(map(str, class_ids)))
 
         # Get bounding boxes for each object
         boxes = self.extract_boxes(box_predictions)
 
         # Apply non-maxima suppression to suppress weak, overlapping bounding boxes
         indices = nms(boxes, scores, iou_thres)
+        st.info(str(len(indices)))
 
         return boxes[indices], scores[indices], class_ids[indices], mask_predictions[indices]
 

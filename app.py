@@ -17,6 +17,7 @@ model_q_path_160ep = 'best_q_160ep.onnx'
 model_path_40ep = 'best_40ep.onnx'
 model_path_80ep = 'best_80ep.onnx'
 model_path_160ep = 'best_160ep.onnx'
+model_path_80ep_bg = 'best_80ep_bg.onnx'
 #conf_thres=0.5
 #iou_thres=0.3
 
@@ -154,11 +155,7 @@ def main(input_file, model, conf_thres, iou_thres):
 file_upload = st.file_uploader('Upload Document Image:', type=['jpg', 'jpeg', 'png'])
 
 if file_upload is not None:
-    #if st.checkbox('Use v2 model weights (40 + 40) epochs'):
-    #    model = YOLOseg(model_path_v2) #load_model(model_path)
-    #else:
-    #    model = YOLOseg(model_path_v1) #load_model(model_path)
-    model_list = ['Nano, 40 epochs', 'Nano, 80 epochs', 'Nano, 160 epochs', 'Nano, 40 epochs, quantized', 'Nano, 80 epochs, quantized', 'Nano, 160 epochs, quantized']
+    model_list = ['Nano, 40 epochs', 'Nano, 80 epochs', 'Nano, 160 epochs', 'Nano, 40 epochs, quantized', 'Nano, 80 epochs, quantized', 'Nano, 160 epochs, quantized', 'Nano, 80 epochs 3 classes']
     option = st.selectbox(
         'What model would you like to use?',
         model_list
@@ -175,8 +172,10 @@ if file_upload is not None:
         model_path = model_q_path_80ep
     elif option == model_list[5]:
         model_path = model_q_path_160ep
+    elif option == model_list[6]:
+        model_path = model_path_80ep_bg
     else:
-        model_path = model_q_path_160ep
+        model_path = model_path_80ep_bg
     model = YOLOseg(model_path) 
     if st.checkbox('Confidence $\in$ [0.0, 100.0]'):
         conf_max_val = 100.0

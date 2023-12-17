@@ -3,7 +3,7 @@ import cv2
 import numpy as np
 
 
-class_names = ['id card', 'id slip', 'background']
+class_names = ['background', 'id slip', 'id card']
 
 # Create a list of colors for each class where each color is a tuple of 3 integer values
 rng = np.random.default_rng(3)

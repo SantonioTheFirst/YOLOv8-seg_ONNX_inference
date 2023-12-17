@@ -128,6 +128,7 @@ def main(input_file, model, conf_thres, iou_thres):
         #st.image(remove_shadows(image), channels='BGR', caption='removed shadows')
         start = time()
         boxes, scores, class_ids, masks = model(image, conf_thres, iou_thres)
+        st.info(', '.join(class_ids))
         # Draw detections
         combined_img = model.draw_masks(image)
         st.info(f'Prediction time: {time() - start}s')

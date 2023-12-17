@@ -3,7 +3,7 @@ import cv2
 import onnxruntime
 import math
 from utils import nms, sigmoid, xywh2xyxy, draw_detections
-#import streamlit as st
+import streamlit as st
 
 
 class YOLOseg:
@@ -89,6 +89,7 @@ class YOLOseg:
 
         predictions = np.squeeze(box_output).T
         num_classes = box_output.shape[1] - self.num_masks - 4
+        st.info(f'num classes: {num_classes}') 
 
         # Filter out object confidence scores below threshold
         scores = np.max(predictions[:, 4: 4 + num_classes], axis=1)

@@ -95,6 +95,7 @@ class YOLOseg:
         scores = np.max(predictions[:, 4: 4 + num_classes], axis=1)
         predictions = predictions[scores > conf_thres, :]
         scores = scores[scores > conf_thres]
+        st.info(f'scores: {len(scores)}')
 
         if len(scores) == 0:
             return [], [], [], np.array([])

@@ -8,10 +8,11 @@ import streamlit as st
 
 class YOLOseg:
 
-    def __init__(self, path, num_masks=32):
+    def __init__(self, path, num_masks=32, imgsz=640):
         #self.conf_threshold = conf_thres
         #self.iou_threshold = iou_thres
         self.num_masks = num_masks
+        self.imgsz = imgsz
 
         # Initialize model
         self.initialize_model(path)
@@ -56,7 +57,7 @@ class YOLOseg:
         #st.info(f'{type(outputs)}, {len(outputs)}, {outputs[0].shape}')
 
         # Prepare output array
-        #outputs = np.array([cv2.transpose(outputs[0])]) 
+        #outputs = np.array([cv2.transpose(outputs[0])])
 
         self.boxes, self.scores, self.class_ids, mask_pred = self.process_box_output(outputs[0], conf_thres, iou_thres)
         self.mask_maps = self.process_mask_output(mask_pred, outputs[1])
@@ -67,9 +68,13 @@ class YOLOseg:
         self.img_height, self.img_width = image.shape[:2]
 
         input_img = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        ratio = max([self.img_height, self.img_width]) / self.imgsz
 
         # Resize input image
+        self.input_height = int(self.img_height / ratio)
+        self.input_width = int(self.img_width / ratio)
         input_img = cv2.resize(input_img, (self.input_width, self.input_height))
+        #print(input_img.shape)
 
         # Scale input pixel values to 0 to 1
         input_img = input_img / 255.0
@@ -89,13 +94,11 @@ class YOLOseg:
 
         predictions = np.squeeze(box_output).T
         num_classes = box_output.shape[1] - self.num_masks - 4
-        st.info(f'num classes: {num_classes}') 
 
         # Filter out object confidence scores below threshold
         scores = np.max(predictions[:, 4: 4 + num_classes], axis=1)
         predictions = predictions[scores > conf_thres, :]
         scores = scores[scores > conf_thres]
-        st.info(f'scores: {len(scores)}')
 
         if len(scores) == 0:
             return [], [], [], np.array([])
@@ -105,14 +108,14 @@ class YOLOseg:
 
         # Get the class with the highest confidence
         class_ids = np.argmax(box_predictions[:, 4:], axis=1)
-        st.info(', '.join(map(str, class_ids)))
+        #st.info(', '.join(map(str, class_ids)))
 
         # Get bounding boxes for each object
         boxes = self.extract_boxes(box_predictions)
 
         # Apply non-maxima suppression to suppress weak, overlapping bounding boxes
         indices = nms(boxes, scores, iou_thres)
-        st.info(str(len(indices)))
+        #st.info(str(len(indices)))
 
         return boxes[indices], scores[indices], class_ids[indices], mask_predictions[indices]
 
@@ -192,9 +195,10 @@ class YOLOseg:
         model_inputs = self.session.get_inputs()
         self.input_names = [model_inputs[i].name for i in range(len(model_inputs))]
 
-        self.input_shape = model_inputs[0].shape
-        self.input_height = self.input_shape[2]
-        self.input_width = self.input_shape[3]
+        #self.input_shape = model_inputs[0].shape
+        #self.input_height = self.input_shape[2]
+        #self.input_width = self.input_shape[3]
+        #print(self.input_shape)
 
     def get_output_details(self):
         model_outputs = self.session.get_outputs()
